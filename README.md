@@ -1,10 +1,12 @@
 # **Result Management System🏫**  
-*A Python-based console application to manage student results efficiently, with separate portals for teachers and students.*  
+*A Python-based console application developed by our team to manage student results efficiently, with separate portals for teachers and students.*  
 
 ---
 
 ## 📌 **About the Project**  
-**Result Management System** implements CRUD operations (Create, Read, Update, Delete) to manage student results efficiently. The application uses Python with SQLite for data storage, allowing seamless interaction between the program and the database. This ensures that student records are securely stored and can be easily retrieved, modified, or deleted as needed.The system uses **SQLite** for database storage and **ReportLab** to generate professional-looking **PDF marksheets**.
+**Result Management System** is a collaborative Python project that implements CRUD operations (Create, Read, Update, Delete) to efficiently manage student results.
+
+Our team designed this system using SQLite for secure and reliable data storage, and ReportLab to generate professional-looking PDF marksheets. It ensures that student records are stored safely and can be easily accessed, updated, or deleted whenever needed.
 
 Note: This project was created as a part of a college team project, showcasing collaborative software development and Python database integration skills:  
 
@@ -58,8 +60,7 @@ python main.py
 
 
 ```
-### Creator
-Nisarg0007
+
 
 
 
