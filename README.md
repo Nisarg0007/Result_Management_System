@@ -6,9 +6,10 @@
 ## 📌 **About the Project**  
 **Result Management System** is a collaborative Python project that implements CRUD operations (Create, Read, Update, Delete) to efficiently manage student results.
 
-Our team designed this system using SQLite for secure and reliable data storage, and ReportLab to generate professional-looking PDF marksheets. It ensures that student records are stored safely and can be easily accessed, updated, or deleted whenever needed.
+The system is built using **SQLite** for secure and reliable data storage, and **ReportLab** for generating professional PDF marksheets.  
+It now includes **modular code improvements** (`utils.py`), **audit log tracking** (`view_audit_logs.py`), and enhanced **user authentication** for both students and teachers.
 
-Note: This project was created as a part of a college team project, showcasing collaborative software development and Python database integration skills:  
+> 🧠 This project was created as part of a college software development course, focusing on teamwork, modular design, and real-world database integration.
 
 ---
 
@@ -19,18 +20,30 @@ Note: This project was created as a part of a college team project, showcasing c
 - Enter, update, or delete student marks.  
 - View all student results (subject-wise).  
 - View and sort student CGPAs (ascending/descending).  
+- Manage audit logs (track who updated which record).  
 
 ✅ **Student Portal**  
 - View semester-wise results in formatted tables.  
-- Check SGPA and CGPA instantly.  
-- Generate PDF marksheets with subject, marks, and grade details.  
+- Instantly view SGPA and CGPA.  
+- Download PDF marksheets with subject, marks, and grade details.  
+- Secure login using encrypted passwords.  
+
+✅ **Audit Log System**  
+- Added in the latest update (`view_audit_logs.py`).  
+- Records all important actions (like data edits or deletions) for transparency.  
+- Viewable only by authorized users.  
+
+✅ **Utility Module (`utils.py`)**  
+- Centralized helper functions for cleaner code.  
+- Handles repetitive tasks like grade calculations, validation, and formatting.
 
 ✅ **PDF Generation**  
-- Automatically creates a printable marksheet with course info, SGPA, and CGPA.
+- Automatically creates printable marksheets using ReportLab.  
+- Includes student name, course details, SGPA, and CGPA.  
 
 ---
 
-## 📌**Tech Stack**
+## 📌 **Tech Stack**
 
 | Technology | Purpose |
 |-------------|----------|
@@ -39,15 +52,16 @@ Note: This project was created as a part of a college team project, showcasing c
 | 📄 **ReportLab** | PDF generation for marksheets |
 | 📊 **Tabulate** | Beautifies console tables |
 | 🔐 **bcrypt + maskpass** | Password encryption & secure login |
+| 🧩 **Custom Utility Scripts** | Code reusability and modularization |
 
 ---
 
-
 ## 🚀 **Getting Started**
+
 ### **Run Locally**
 ```bash
 # Clone the repository
-git clone git@github.com:Nisarg0007/Result_Managament_System.git
+git clone https://github.com/Nisarg0007/Result_Managament_System.git
 
 # Navigate into the project folder
 cd RESULT_MANAGEMENT_SYSTEM
@@ -57,10 +71,5 @@ pip install -r requirements.txt
 
 # Run the program
 python main.py
-
-
-```
-
-
 
 
