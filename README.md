@@ -33,10 +33,6 @@ It now includes **modular code improvements** (`utils.py`), **audit log tracking
 - Records all important actions (like data edits or deletions) for transparency.  
 - Viewable only by authorized users.  
 
-✅ **Utility Module (`utils.py`)**  
-- Centralized helper functions for cleaner code.  
-- Handles repetitive tasks like grade calculations, validation, and formatting.
-
 ✅ **PDF Generation**  
 - Automatically creates printable marksheets using ReportLab.  
 - Includes student name, course details, SGPA, and CGPA.  
