@@ -1,4 +1,6 @@
 from tabulate import tabulate
+from utils import log_event
+
 
 def calculate_grade(marks):
     if marks >= 90:
@@ -50,7 +52,7 @@ def TeacherPortal(connection, teacher_id, username):
         print("7. Logout")
         choice = input("Choose an option: ").strip()
 
-        # ADDING COURSE
+        # ADD SUBJECT
         if choice == "1":
             code = input("Subject code: ").strip()
             name = input("Subject name: ").strip()
@@ -61,25 +63,27 @@ def TeacherPortal(connection, teacher_id, username):
                     (code, name, credits, teacher_id)
                 )
                 connection.commit()
-                print("Subject added.")
+                print("✅ Subject added successfully.")
+                log_event(username, "teacher", f"Added subject '{name}' (code={code}, credits={credits}).")
             except Exception as e:
-                print("Error:", e)
+                print("❌ Error:", e)
+                log_event(username, "teacher", f"Failed to add subject '{name}': {e}")
 
-        #ENTER RESULT
+        # ENTER RESULT
         elif choice == "2":
-            #STUDENT LIST
             c.execute("SELECT id, username, roll_no, name FROM students")
             students = c.fetchall()
             print(tabulate(students, headers=["id", "username", "roll_no", "name"], tablefmt="grid"))
+
             student_username = input("Enter student username: ").strip()
             c.execute("SELECT id, name FROM students WHERE username=?", (student_username,))
             student = c.fetchone()
             if not student:
                 print("Student not found.")
+                log_event(username, "teacher", f"Tried to enter result for non-existent student '{student_username}'.")
                 continue
             student_id = student[0]
 
-            #TEACHER'S SUBJECTS
             c.execute("SELECT id, code, name, credits FROM subjects WHERE teacher_id=?", (teacher_id,))
             subjects = c.fetchall()
             if not subjects:
@@ -89,7 +93,6 @@ def TeacherPortal(connection, teacher_id, username):
             subject_id = int(input("Enter subject id: ").strip())
             semester = int(input("Semester number: ").strip())
 
-            #AVOIDING DUPLICATES
             c.execute("SELECT id FROM marks WHERE student_id=? AND subject_id=? AND semester=?",
                       (student_id, subject_id, semester))
             if c.fetchone():
@@ -103,9 +106,10 @@ def TeacherPortal(connection, teacher_id, username):
                 (student_id, subject_id, semester, marks, grade, gp)
             )
             connection.commit()
-            print("Result recorded.")
+            print("✅ Result recorded.")
+            log_event(username, "teacher", f"Entered marks for student_id={student_id}, subject_id={subject_id}, sem={semester}, marks={marks}.")
 
-            #UPDATE RESULT
+        # UPDATE RESULT
         elif choice == "3":
             student_username = input("Enter student username: ").strip()
             c.execute("SELECT id FROM students WHERE username=?", (student_username,))
@@ -126,8 +130,7 @@ def TeacherPortal(connection, teacher_id, username):
 
             c.execute("SELECT id FROM marks WHERE student_id=? AND subject_id=? AND semester=?",
                       (student_id, subject_id, semester))
-            mark_row = c.fetchone()
-            if not mark_row:
+            if not c.fetchone():
                 print("No existing result. Use Add Result option.")
                 continue
 
@@ -136,9 +139,10 @@ def TeacherPortal(connection, teacher_id, username):
             c.execute("UPDATE marks SET marks=?, grade=?, grade_point=? WHERE student_id=? AND subject_id=? AND semester=?",
                       (marks, grade, gp, student_id, subject_id, semester))
             connection.commit()
-            print("Result updated.")
+            print("✅ Result updated.")
+            log_event(username, "teacher", f"Updated marks for student_id={student_id}, subject_id={subject_id}, sem={semester}, new_marks={marks}.")
 
-        #DELETE REAULT
+        # DELETE RESULT
         elif choice == "4":
             student_username = input("Enter student username: ").strip()
             c.execute("SELECT id FROM students WHERE username=?", (student_username,))
@@ -160,9 +164,10 @@ def TeacherPortal(connection, teacher_id, username):
             c.execute("DELETE FROM marks WHERE student_id=? AND subject_id=? AND semester=?",
                       (student_id, subject_id, semester))
             connection.commit()
-            print("Result deleted...")
+            print("🗑️ Result deleted.")
+            log_event(username, "teacher", f"Deleted marks for student_id={student_id}, subject_id={subject_id}, sem={semester}.")
 
-        #VIEW ALL RESULT
+        # VIEW ALL RESULTS
         elif choice == "5":
             c.execute("""SELECT s.username, s.roll_no, s.name, subj.code, subj.name, m.semester, m.marks, m.grade
                          FROM marks m
@@ -173,13 +178,13 @@ def TeacherPortal(connection, teacher_id, username):
             rows = c.fetchall()
             if rows:
                 print(tabulate(rows, headers=["username", "roll_no", "name", "subj_code", "subject", "sem", "marks", "grade"], tablefmt="grid"))
+                log_event(username, "teacher", "Viewed all results list.")
             else:
                 print("No results found.")
 
-        #VIEW CLASS LIST AND SORT BASED ON CGPA
+        # VIEW CLASS LIST
         elif choice == "6":
             from operator import itemgetter
-
             c.execute("SELECT id, username, name, roll_no FROM students")
             students = c.fetchall()
             class_list = []
@@ -199,11 +204,11 @@ def TeacherPortal(connection, teacher_id, username):
                 class_list = sorted(class_list, key=itemgetter(4))
 
             print(tabulate(class_list, headers=["student_id", "username", "roll_no", "name", "CGPA"], tablefmt="grid"))
+            log_event(username, "teacher", "Viewed class list with CGPA.")
 
-
-        
         elif choice == "7":
             print("Logging out.")
+            log_event(username, "teacher", "Logged out of portal.")
             break
 
         else:

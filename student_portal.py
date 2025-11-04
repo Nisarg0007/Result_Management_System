@@ -1,14 +1,15 @@
-from tabulate import tabulate  #FORMATTED RESULT IN TERMINAL
-from reportlab.lib.pagesizes import letter  #PDF GENERATION
+from tabulate import tabulate
+from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
+from utils import log_event
+
 
 def calculate_sgpa(conn, student_id, semester):
-    c = conn.cursor()   
-    #CONNECT MARKS AND SUBJECT TABLE THROUGH ID
+    c = conn.cursor()
     c.execute("""
         SELECT m.grade_point, s.credits
         FROM marks m
-        JOIN subjects s ON m.subject_id = s.id  
+        JOIN subjects s ON m.subject_id = s.id
         WHERE m.student_id=? AND m.semester=?
     """, (student_id, semester))
     data = c.fetchall()
@@ -23,7 +24,6 @@ def calculate_sgpa(conn, student_id, semester):
 
 def calculate_cgpa(conn, student_id):
     c = conn.cursor()
-    #CONNECT MARKS AND SUBJECT TABLE THROUGH ID
     c.execute("""
         SELECT m.grade_point, s.credits
         FROM marks m
@@ -89,16 +89,18 @@ def generate_marksheet_pdf(conn, student_id, username, semester):
     pdf.drawString(50, y, f"SGPA: {sgpa}")
     pdf.drawString(200, y, f"CGPA: {cgpa}")
     pdf.save()
-    print("Marksheet saved as", filename)
+    print("📄 Marksheet saved as", filename)
+    log_event(username, "student", f"Downloaded marksheet PDF for semester {semester}.")
 
 def StudentPortal(connection, student_id, username):
     c = connection.cursor()
     print(f"Welcome, {username}. Student Portal")
+
     while True:
         print("\nStudent Menu")
         print("1. View my results (semester)")
         print("2. View consolidated CGPA")
-        print("3. Download marksheet (PDF) for a semester")
+        print("3. Download marksheet (PDF)")
         print("4. Logout")
         choice = input("Choose an option: ").strip()
 
@@ -119,10 +121,12 @@ def StudentPortal(connection, student_id, username):
             sgpa = calculate_sgpa(connection, student_id, semester)
             cgpa = calculate_cgpa(connection, student_id)
             print(f"SGPA: {sgpa}   CGPA: {cgpa}")
+            log_event(username, "student", f"Viewed results for semester {semester}.")
 
         elif choice == "2":
             cgpa = calculate_cgpa(connection, student_id)
             print("Your CGPA is:", cgpa)
+            log_event(username, "student", "Viewed consolidated CGPA.")
 
         elif choice == "3":
             semester = int(input("Enter semester for marksheet: ").strip())
@@ -130,6 +134,8 @@ def StudentPortal(connection, student_id, username):
 
         elif choice == "4":
             print("Logging out.")
+            log_event(username, "student", "Logged out of portal.")
             break
+
         else:
             print("Invalid choice.")
